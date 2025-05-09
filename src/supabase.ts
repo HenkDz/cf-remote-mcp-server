@@ -18,32 +18,31 @@ export interface Env extends Cloudflare.Env { // Assuming Cloudflare.Env is glob
     OAUTH_PROVIDER?: { fetch: (req: Request) => Promise<Response> }; // Based on app.ts
 }
 
-let supabase: SupabaseClient;
+// TODO: Consider if supabaseClientOptions from original project are needed
+// const supabaseClientOptions = {
+//   auth: {
+//     autoRefreshToken: false,
+//     persistSession: false,
+//     detectSessionInUrl: false,
+//   },
+// };
 
-export function getSupabaseClient(env: Env): SupabaseClient {
-    if (!supabase) {
-        if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
-            throw new Error('Supabase URL and Anon Key are required in environment.');
-        }
-        // TODO: Consider if supabaseClientOptions from original project are needed
-        supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
+export function createSupabaseClient(supabaseUrl: string, supabaseAnonKey: string): SupabaseClient {
+    if (!supabaseUrl || !supabaseAnonKey) {
+        throw new Error('Supabase URL and Anon Key are required to create a client.');
     }
-    return supabase;
+    // When/if supabaseClientOptions are needed, pass them as the third argument to createClient
+    return createClient(supabaseUrl, supabaseAnonKey);
 }
 
-// Optional: If you need a service role client for specific operations
-let supabaseServiceRole: SupabaseClient;
-export function getSupabaseServiceRoleClient(env: Env): SupabaseClient | null {
-    if (!env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.warn('SUPABASE_SERVICE_ROLE_KEY not provided, service role client will not be available.');
-      return null;
+export function createSupabaseServiceRoleClient(supabaseUrl: string, supabaseServiceKey: string): SupabaseClient {
+    if (!supabaseUrl || !supabaseServiceKey) {
+        throw new Error('Supabase URL and Service Role Key are required to create a service role client.');
     }
-    if (!supabaseServiceRole) {
-         if (!env.SUPABASE_URL) {
-            throw new Error('Supabase URL is required in environment for service role client.');
-        }
-        // TODO: Consider if supabaseClientOptions from original project are needed
-        supabaseServiceRole = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-    }
-    return supabaseServiceRole;
-} 
+    // When/if supabaseClientOptions are needed, pass them as the third argument to createClient
+    return createClient(supabaseUrl, supabaseServiceKey);
+}
+
+// The Env interface and the old getSupabaseClient / getSupabaseServiceRoleClient functions
+// that relied on environment variables and global client instances have been removed.
+// Client creation is now dynamic based on credentials passed at runtime. 
