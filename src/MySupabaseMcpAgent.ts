@@ -1,7 +1,8 @@
 import { McpAgent } from 'agents/mcp';
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from 'zod';
-import type { Env as WorkerEnv } from './supabase'; // Renaming to avoid conflict with internal Env
+// Removed import of Env as WorkerEnv from './supabase' as Env is no longer exported from there.
+// The Env type for the worker should be globally available from worker-configuration.d.ts or defined elsewhere.
 import { createSupabaseClient, createSupabaseServiceRoleClient } from './supabase'; // Updated import to match the actual function names in supabase.ts
 import type { SupabaseClient } from '@supabase/supabase-js';
 
@@ -23,10 +24,12 @@ interface MyMCPState {
     // Add any other session-specific state you might need
 }
 
-export class MyMCP extends McpAgent<WorkerEnv, MyMCPState, Record<string, never>> {
+// Assuming 'Env' is the correct type for the Cloudflare Worker environment bindings
+// It should be available globally or via worker-configuration.d.ts
+export class MyMCP extends McpAgent<Env, MyMCPState, Record<string, never>> {
     public server: McpServer;
 
-    constructor(state: DurableObjectState, env: WorkerEnv) {
+    constructor(state: DurableObjectState, env: Env) {
         super(state, env);
         this.server = new McpServer({
             name: 'cf-dynamic-supabase-mcp',
