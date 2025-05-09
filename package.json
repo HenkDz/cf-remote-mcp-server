@@ -19,7 +19,9 @@
 	"dependencies": {
 		"@cloudflare/workers-oauth-provider": "^0.0.5",
 		"@modelcontextprotocol/sdk": "^1.11.1",
+		"@supabase/supabase-js": "^2.49.4",
 		"agents": "^0.0.80",
+		"commander": "^13.1.0",
 		"hono": "^4.7.9",
 		"zod": "^3.24.4"
 	}
